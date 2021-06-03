@@ -651,11 +651,18 @@ func ApiQuery2CQR(c *gin.Context) {
 }
 
 func (s Server) ApiHistoryGet(c *gin.Context) {
-	if !s.Perm.UserState().IsLoggedIn(s.Perm.UserState().Username(c.Request)) {
+	if s.Config.RequireAuth && !s.Perm.UserState().IsLoggedIn(s.Perm.UserState().Username(c.Request)) {
 		c.Status(http.StatusForbidden)
 		return
 	}
-	username := s.Perm.UserState().Username(c.Request)
+
+	var username string
+	if s.Config.RequireAuth {
+		username = s.Perm.UserState().Username(c.Request)
+	} else {
+		username = "default"
+	}
+
 	// reverse the list
 	q := make([]Query, len(s.Queries[username]))
 	j := 0
@@ -669,11 +676,18 @@ func (s Server) ApiHistoryGet(c *gin.Context) {
 }
 
 func (s Server) ApiHistoryAdd(c *gin.Context) {
-	if !s.Perm.UserState().IsLoggedIn(s.Perm.UserState().Username(c.Request)) {
+	if s.Config.RequireAuth && !s.Perm.UserState().IsLoggedIn(s.Perm.UserState().Username(c.Request)) {
 		c.Status(http.StatusForbidden)
 		return
 	}
-	username := s.Perm.UserState().Username(c.Request)
+
+	var username string
+	if s.Config.RequireAuth {
+		username = s.Perm.UserState().Username(c.Request)
+	} else {
+		username = "default"
+	}
+
 	rawQuery := c.PostForm("query")
 	lang := c.PostForm("lang")
 	p := make(map[string]tpipeline.TransmutePipeline)
@@ -779,12 +793,18 @@ func (s Server) ApiGetQuerySeedFromExchangeServer(token string) (toolexchange.It
 }
 
 func (s Server) ApiHistoryDelete(c *gin.Context) {
-	if !s.Perm.UserState().IsLoggedIn(s.Perm.UserState().Username(c.Request)) {
+	if s.Config.RequireAuth && !s.Perm.UserState().IsLoggedIn(s.Perm.UserState().Username(c.Request)) {
 		c.Status(http.StatusForbidden)
 		return
 	}
 
-	username := s.Perm.UserState().Username(c.Request)
+	var username string
+	if s.Config.RequireAuth {
+		username = s.Perm.UserState().Username(c.Request)
+	} else {
+		username = "default"
+	}
+
 	delete(s.Queries, username)
 	log.Infof("[deletehistory] %s", username)
 	c.Status(http.StatusOK)

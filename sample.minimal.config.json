@@ -4,6 +4,7 @@
   "Admins": [
     "admin"
   ],
+  "RequireAuth": true,
   "Entrez": {
     "Email": "you@example.com",
     "APIKey": "1234abcde"

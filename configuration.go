@@ -64,6 +64,7 @@ type Config struct {
 	Resources             Resources // TODO: This should be merged into the Services struct.
 	Mode                  string
 	EnableAll             bool
+	RequireAuth           bool
 	Services              Services
 	ExchangeServerAddress string
 	OtherServiceAddresses OtherServiceAddresses

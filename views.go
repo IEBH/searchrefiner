@@ -158,8 +158,16 @@ func (s Server) HandleQuery(c *gin.Context) {
 	sr.BooleanKeywords, _ = analysis.BooleanKeywords.Execute(gq, s.Entrez)
 	sr.MeshKeywords, _ = analysis.MeshKeywordCount.Execute(gq, s.Entrez)
 
-	if s.Perm.UserState().UserRights(c.Request) {
-		username := s.Perm.UserState().Username(c.Request)
+	if !s.Config.RequireAuth || s.Perm.UserState().UserRights(c.Request) {
+		var username string;
+		if s.Config.RequireAuth {
+			fmt.Println("HQ - GET USERNAME");
+			username = s.Perm.UserState().Username(c.Request)
+		} else {
+			fmt.Println("HQ - FALLBACK USERNAME");
+			username = "default"
+		}
+
 		t, err := combinator.NewShallowLogicalTree(gq, s.Entrez, s.Settings[username].Relevant)
 		if err != nil {
 			c.HTML(http.StatusInternalServerError, "error.html", ErrorPage{Error: err.Error(), BackLink: "/"})
@@ -188,10 +196,17 @@ func (s Server) HandleQuery(c *gin.Context) {
 }
 
 func (s Server) HandleIndex(c *gin.Context) {
-	if !s.Perm.UserState().IsLoggedIn(s.Perm.UserState().Username(c.Request)) {
+	if s.Config.RequireAuth && !s.Perm.UserState().IsLoggedIn(s.Perm.UserState().Username(c.Request)) {
 		c.Redirect(http.StatusTemporaryRedirect, "/account/login")
 	}
-	username := s.Perm.UserState().Username(c.Request)
+
+	var username string;
+	if s.Config.RequireAuth {
+		username = s.Perm.UserState().Username(c.Request)
+	} else {
+		username = "default"
+	}
+
 	// reverse the list
 	q := make([]Query, len(s.Queries[username]))
 	j := 0
@@ -256,7 +271,12 @@ func HandleTransform(c *gin.Context) {
 }
 
 func (s Server) HandleClear(c *gin.Context) {
-	username := s.Perm.UserState().Username(c.Request)
+	var username string;
+	if s.Config.RequireAuth {
+		username = s.Perm.UserState().Username(c.Request)
+	} else {
+		username = "default"
+	}
 	s.Queries[username] = []Query{}
 	c.Redirect(http.StatusFound, "/")
 	return

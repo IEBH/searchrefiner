@@ -118,10 +118,17 @@ func main() {
 	perm.UserState().SetCookieTimeout(int64(cookieSeconds))
 
 	perm.Clear()
-	perm.AddUserPath("/query")
-	perm.AddUserPath("/settings")
-	perm.AddUserPath("/api")
-	perm.AddUserPath("/plugins")
+	if c.RequireAuth {
+		perm.AddUserPath("/query")
+		perm.AddUserPath("/settings")
+		perm.AddUserPath("/api")
+		perm.AddUserPath("/plugins")
+	} else {
+		perm.AddPublicPath("/query")
+		perm.AddPublicPath("/settings")
+		perm.AddPublicPath("/api")
+		perm.AddPublicPath("/plugins")
+	}
 
 	perm.AddPublicPath("/account")
 	perm.AddPublicPath("/static")
@@ -281,13 +288,15 @@ func main() {
 	g.POST("/admin/api/storage/csv", s.ApiAdminCSVStorage)
 
 	// Authentication views.
-	g.GET("/account/login", searchrefiner.HandleAccountLogin)
-	g.GET("/account/create", searchrefiner.HandleAccountCreate)
+	if s.Config.RequireAuth {
+		g.GET("/account/login", searchrefiner.HandleAccountLogin)
+		g.GET("/account/create", searchrefiner.HandleAccountCreate)
 
-	// Authentication API.
-	g.POST("/account/api/login", s.ApiAccountLogin)
-	g.POST("/account/api/create", s.ApiAccountCreate)
-	g.GET("/account/api/logout", s.ApiAccountLogout)
+		// Authentication API.
+		g.POST("/account/api/login", s.ApiAccountLogin)
+		g.POST("/account/api/create", s.ApiAccountCreate)
+		g.GET("/account/api/logout", s.ApiAccountLogout)
+	}
 	g.GET("/api/username", s.ApiAccountUsername)
 
 	if c.EnableAll == true {
@@ -298,7 +307,7 @@ func main() {
 		g.GET("/query", s.HandleQuery)
 	} else {
 		g.GET("/", func(ctx *gin.Context) {
-			if !s.Perm.UserState().IsLoggedIn(s.Perm.UserState().Username(ctx.Request)) {
+			if s.Config.RequireAuth && !s.Perm.UserState().IsLoggedIn(s.Perm.UserState().Username(ctx.Request)) {
 				ctx.Redirect(http.StatusTemporaryRedirect, "/account/login")
 				return
 			}
