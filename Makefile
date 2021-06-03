@@ -6,7 +6,7 @@ go_source = *.go cmd/searchrefiner/*.go
 SERVER = server
 
 plugin: $(plugin_obs)
-PHONEY: run all plugin clean quicklearn
+.PHONY: run plugin clean quicklearn docker-shell docker-run docker-deploy
 
 # These compile the quicklearn binary, which are required for the QueryLens plugin.
 $(quicklearn_bin):
@@ -32,3 +32,23 @@ run: quicklearn $(SERVER)
 
 clean:
 	@[ -f server ] && rm $(foreach plugin,$(plugin_obs),$(plugin)) server || true
+
+docker-build:
+	docker build -t ielab-searchrefiner .
+	docker network rm search-refiner-net
+	docker network create search-refiner-net --driver=bridge
+
+# Deploy a SearchRefiner docker setup on the SRA server
+docker-deploy:
+	docker run --rm --net=search-refiner-net --publish=8001:4853/tcp --publish=8080:80/tcp  --name=sr-1 ielab-searchrefiner
+	# docker run --rm --net=search-refiner-net --publish=8002:4853/tcp --publish=8080:80/tcp --name=sr-2 ielab-searchrefiner
+	# docker run --rm --net=search-refiner-net --publish=8003:4853/tcp --publish=8080:80/tcp --name=sr-3 ielab-searchrefiner
+	# docker run --rm --net=search-refiner-net --publish=8004:4853/tcp --publish=8080:80/tcp --name=sr-4 ielab-searchrefiner
+
+# Run the SearchRefiner in the foreground on the local terminal
+docker-run:
+	docker run --rm --net=search-refiner-net --publish=8001:4853/tcp --publish=8080:80/tcp --name=sr-1 ielab-searchrefiner
+
+# Dial into a paused SearchRefiner instance (use ./server to run)
+docker-shell:
+	docker run --rm --net=search-refiner-net --publish=8001:4853/tcp --publish=8080:80/tcp --name=sr-1 -it ielab-searchrefiner /bin/sh
