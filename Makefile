@@ -35,7 +35,7 @@ clean:
 
 docker-build:
 	docker build -t ielab-searchrefiner .
-	docker network rm search-refiner-net
+	-docker network rm search-refiner-net
 	docker network create search-refiner-net --driver=bridge
 
 # Deploy a SearchRefiner docker setup on the SRA server
@@ -47,8 +47,8 @@ docker-deploy:
 
 # Run the SearchRefiner in the foreground on the local terminal
 docker-run:
-	docker run --rm --net=search-refiner-net --publish=8001:4853/tcp --publish=8080:80/tcp --name=sr-1 ielab-searchrefiner
+	-docker run --rm --net=search-refiner-net --publish=8001:4853/tcp --publish=8080:80/tcp --name=sr-1 ielab-searchrefiner
 
 # Dial into a paused SearchRefiner instance (use ./server to run)
 docker-shell:
-	docker run --rm --net=search-refiner-net --publish=8001:4853/tcp --publish=8080:80/tcp --name=sr-1 -it ielab-searchrefiner /bin/sh
+	-docker run --rm --net=search-refiner-net --publish=8001:4853/tcp --publish=8080:80/tcp --name=sr-1 -it ielab-searchrefiner /bin/sh
