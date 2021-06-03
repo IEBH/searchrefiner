@@ -4,7 +4,7 @@ FROM golang:alpine
 RUN apk add --no-cache cmake git g++ make
 
 # Clone repo
-RUN git clone https://github.com/ielab/searchrefiner.git /sr
+RUN git clone https://github.com/IEBH/searchrefiner.git /sr
 WORKDIR /sr
 
 # Fix issue with G++ not pointing to correct binary in Makefile
