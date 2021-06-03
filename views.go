@@ -161,10 +161,8 @@ func (s Server) HandleQuery(c *gin.Context) {
 	if !s.Config.RequireAuth || s.Perm.UserState().UserRights(c.Request) {
 		var username string;
 		if s.Config.RequireAuth {
-			fmt.Println("HQ - GET USERNAME");
 			username = s.Perm.UserState().Username(c.Request)
 		} else {
-			fmt.Println("HQ - FALLBACK USERNAME");
 			username = "default"
 		}
 
