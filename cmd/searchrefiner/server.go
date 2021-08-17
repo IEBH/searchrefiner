@@ -142,7 +142,7 @@ func main() {
 
 	// CORS
 	corsConfig := cors.DefaultConfig()
-	corsConfig.AllowOrigins = []string{"https://searchrefinery.sr-accelerator.com", "http://localhost:8080"}
+	corsConfig.AllowOrigins = []string{"https://searchrefinery.sr-accelerator.com"}
 	// OPTIONS method for preflight request
 	corsConfig.AddAllowMethods("OPTIONS")
 	g.Use(cors.New(corsConfig))
@@ -363,10 +363,10 @@ func main() {
 	searchrefiner.ServerConfiguration = s
 
 	fmt.Print(`
-                      _           ___ _             
-  ___ ___ ___ ___ ___| |_ ___ ___|  _|_|___ ___ ___ 
+                      _           ___ _
+  ___ ___ ___ ___ ___| |_ ___ ___|  _|_|___ ___ ___
  |_ -| -_| .'|  _|  _|   |  _| -_|  _| |   | -_|  _|
- |___|___|__,|_| |___|_|_|_| |___|_| |_|_|_|___|_|  
+ |___|___|__,|_| |___|_|_|_| |___|_| |_|_|_|___|_|
 
  Harry Scells 2018-2020
  harry@scells.me
