@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/gin-contrib/gzip"
 	"github.com/gin-gonic/gin"
+	"github.com/gin-contrib/cors"
 	"github.com/hscells/cui2vec"
 	"github.com/hscells/groove/stats"
 	"github.com/hscells/metawrap"
@@ -92,6 +93,7 @@ func main() {
 	dbPath := "citemed.db"
 
 	g := gin.Default()
+
 	gin.DefaultWriter = io.MultiWriter(ginLf, os.Stdout)
 	g.Use(gin.LoggerWithFormatter(func(param gin.LogFormatterParams) string {
 		// your custom format
@@ -137,6 +139,13 @@ func main() {
 	perm.AddPublicPath("/api/username")
 
 	perm.AddAdminPath("/admin")
+
+	// CORS
+	corsConfig := cors.DefaultConfig()
+	corsConfig.AllowOrigins = []string{"https://searchrefinery.sr-accelerator.com", "http://localhost:8080"}
+	// OPTIONS method for preflight request
+	corsConfig.AddAllowMethods("OPTIONS")
+	g.Use(cors.New(corsConfig))
 
 	ss, err := stats.NewEntrezStatisticsSource(
 		stats.EntrezOptions(stats.SearchOptions{Size: 100000, RunName: "searchrefiner"}),
