@@ -133,7 +133,7 @@ func (QueryVisPlugin) Serve(s searchrefiner.Server, c *gin.Context) {
 				item = i.(cachedItem)
 			}
 		}
-		handleTree(s, c, item.seeds...)
+		handleTree(s, c)
 		return
 	}
 
