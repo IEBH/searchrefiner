@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"strings"
+	"strconv"
 	"github.com/gin-gonic/gin"
 	"github.com/hscells/cqr"
 	"github.com/hscells/groove/combinator"
@@ -38,7 +39,15 @@ func (QueryVisPlugin) Startup(server searchrefiner.Server) {
 func handleTree(s searchrefiner.Server, c *gin.Context) {
 	rawQuery := c.PostForm("query")
 	lang := c.PostForm("lang")
-	relevant := strings.Fields(c.PostForm("pmids"))
+	pmids := strings.Fields(c.PostForm("pmids"))
+	var relevant = []combinator.Document{}
+	for _, i := range pmids {
+		j, err := strconv.Atoi(i)
+		if err != nil {
+				panic(err)
+		}
+		relevant = append(relevant, j)
+	}
 	fmt.Println(relevant)
 
 	p := make(map[string]tpipeline.TransmutePipeline)
