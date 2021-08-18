@@ -143,7 +143,7 @@ func main() {
 
 	// CORS
 	corsConfig := cors.DefaultConfig()
-	corsConfig.AllowOrigins = []string{"https://searchrefinery.sr-accelerator.com", "http://localhost:8080/"}
+	corsConfig.AllowOrigins = []string{"https://searchrefinery.sr-accelerator.com", "http://localhost:8080"}
 	// OPTIONS method for preflight request
 	corsConfig.AddAllowMethods("OPTIONS")
 	g.Use(cors.New(corsConfig))
