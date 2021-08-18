@@ -38,6 +38,11 @@ docker-build:
 	-docker network rm search-refiner-net
 	docker network create search-refiner-net --driver=bridge
 
+docker-build-force:
+	docker build --no-cache -t ielab-searchrefiner .
+	-docker network rm search-refiner-net
+	docker network create search-refiner-net --driver=bridge
+
 # Deploy a SearchRefiner docker setup on the SRA server
 docker-deploy:
 	docker run --rm --net=search-refiner-net --publish=8001:4853/tcp --publish=8080:80/tcp  --name=sr-1 ielab-searchrefiner
