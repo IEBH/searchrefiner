@@ -3,16 +3,6 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/gin-contrib/gzip"
-	"github.com/gin-gonic/gin"
-	"github.com/gin-contrib/cors"
-	"github.com/hscells/cui2vec"
-	"github.com/hscells/groove/stats"
-	"github.com/hscells/metawrap"
-	"github.com/hscells/quickumlsrest/quiche"
-	"github.com/ielab/searchrefiner"
-	log "github.com/sirupsen/logrus"
-	"github.com/xyproto/permissionbolt"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -21,6 +11,17 @@ import (
 	"plugin"
 	"strings"
 	"time"
+
+	"github.com/gin-contrib/cors"
+	"github.com/gin-contrib/gzip"
+	"github.com/gin-gonic/gin"
+	"github.com/hscells/cui2vec"
+	"github.com/hscells/groove/stats"
+	"github.com/hscells/metawrap"
+	"github.com/hscells/quickumlsrest/quiche"
+	"github.com/ielab/searchrefiner"
+	log "github.com/sirupsen/logrus"
+	"github.com/xyproto/permissionbolt"
 )
 
 func main() {
@@ -142,7 +143,7 @@ func main() {
 
 	// CORS
 	corsConfig := cors.DefaultConfig()
-	corsConfig.AllowOrigins = []string{"https://searchrefinery.sr-accelerator.com"}
+	corsConfig.AllowOrigins = []string{"https://searchrefinery.sr-accelerator.com", "http://localhost:8080/"}
 	// OPTIONS method for preflight request
 	corsConfig.AddAllowMethods("OPTIONS")
 	g.Use(cors.New(corsConfig))
