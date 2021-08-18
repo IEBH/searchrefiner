@@ -3,8 +3,11 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"strings"
+	"net/http"
 	"strconv"
+	"strings"
+	"time"
+
 	"github.com/gin-gonic/gin"
 	"github.com/hscells/cqr"
 	"github.com/hscells/groove/combinator"
@@ -14,8 +17,6 @@ import (
 	"github.com/ielab/searchrefiner"
 	"github.com/patrickmn/go-cache"
 	log "github.com/sirupsen/logrus"
-	"net/http"
-	"time"
 )
 
 type QueryVisPlugin struct {
@@ -39,16 +40,25 @@ func (QueryVisPlugin) Startup(server searchrefiner.Server) {
 func handleTree(s searchrefiner.Server, c *gin.Context) {
 	rawQuery := c.PostForm("query")
 	lang := c.PostForm("lang")
+	// Create relevant array of pmids {{{
+	// Split string into array by newline
 	pmids := strings.Fields(c.PostForm("pmids"))
-	var relevant = []combinator.Document{}
+	// Create array of integers
+	var rel = []int{}
 	for _, i := range pmids {
 		j, err := strconv.Atoi(i)
 		if err != nil {
-				panic(err)
+			panic(err)
 		}
-		relevant = append(relevant, j)
+		rel = append(rel, j)
+	}
+	// Make combinator.Documents array
+	relevant := make(combinator.Documents, len(rel))
+	for i, r := range rel {
+		relevant[i] = combinator.Document(r)
 	}
 	fmt.Println(relevant)
+	// }}}
 
 	p := make(map[string]tpipeline.TransmutePipeline)
 	p["medline"] = transmute.Medline2Cqr
@@ -137,12 +147,7 @@ func (QueryVisPlugin) Serve(s searchrefiner.Server, c *gin.Context) {
 	}
 
 	if c.Request.Method == "POST" && (c.Query("tree") == "y") {
-		var item cachedItem
-		if token, ok := c.GetQuery("token"); ok {
-			if i, ok := tokenCache.Get(token); ok {
-				item = i.(cachedItem)
-			}
-		}
+		// This is what is actually used to return tree to client
 		handleTree(s, c)
 		return
 	}
