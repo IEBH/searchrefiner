@@ -3,8 +3,11 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"strings"
+	"net/http"
 	"strconv"
+	"strings"
+	"time"
+
 	"github.com/gin-gonic/gin"
 	"github.com/hscells/cqr"
 	"github.com/hscells/groove/combinator"
@@ -14,8 +17,6 @@ import (
 	"github.com/ielab/searchrefiner"
 	"github.com/patrickmn/go-cache"
 	log "github.com/sirupsen/logrus"
-	"net/http"
-	"time"
 )
 
 type QueryVisPlugin struct {
@@ -47,7 +48,7 @@ func handleTree(s searchrefiner.Server, c *gin.Context) {
 	for _, i := range pmids {
 		j, err := strconv.Atoi(i)
 		if err != nil {
-				panic(err)
+			panic(err)
 		}
 		rel = append(rel, j)
 	}
@@ -146,12 +147,7 @@ func (QueryVisPlugin) Serve(s searchrefiner.Server, c *gin.Context) {
 	}
 
 	if c.Request.Method == "POST" && (c.Query("tree") == "y") {
-		var item cachedItem
-		if token, ok := c.GetQuery("token"); ok {
-			if i, ok := tokenCache.Get(token); ok {
-				item = i.(cachedItem)
-			}
-		}
+		// This is what is actually used to return tree to client
 		handleTree(s, c)
 		return
 	}
