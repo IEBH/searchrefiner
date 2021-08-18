@@ -34,9 +34,11 @@ const pluginStorageName = "queryvis_consent"
 func (QueryVisPlugin) Startup(server searchrefiner.Server) {
 }
 
-func handleTree(s searchrefiner.Server, c *gin.Context, relevant ...combinator.Document) {
+func handleTree(s searchrefiner.Server, c *gin.Context) {
 	rawQuery := c.PostForm("query")
 	lang := c.PostForm("lang")
+	relevant := strings.Fields(c.PostForm("pmids"))
+	fmt.Println(relevant)
 
 	p := make(map[string]tpipeline.TransmutePipeline)
 	p["medline"] = transmute.Medline2Cqr

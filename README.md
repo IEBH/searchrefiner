@@ -12,9 +12,9 @@ It is currently in development, however please find a demo link [on the project 
 searchrefiner is built as a Go application. It needs to be installed slightly differently than most Go applications:
 
  1. First, clone this repository.
- 2. Configure the application. The application can then be configured via a `config.json` (a [sample](sample.minimal.config.json) is provided). In this minimal file, everything up to and including `Entrez` needs to be configured. The other options below this key do not need to be configured to run searchrefiner in a minimal setting and they should not be changed unless you know what you are doing. Many of the tools require specific attributes in the configuration. Please get in contact if you are setting up your own instance of searchrefiner to determine how these advances configuration items should be set. 
+ 2. Configure the application. The application can then be configured via a `config.json` (a [sample](sample.minimal.config.json) is provided). In this minimal file, everything up to and including `Entrez` needs to be configured. The other options below this key do not need to be configured to run searchrefiner in a minimal setting and they should not be changed unless you know what you are doing. Many of the tools require specific attributes in the configuration. Please get in contact if you are setting up your own instance of searchrefiner to determine how these advances configuration items should be set.
  3. Ensure that `g++-5` and `cmake` are installed on your system.
- 4. Run `make run`. This will download all of the necessary dependencies and run the application. 
+ 4. Run `make run`. This will download all of the necessary dependencies and run the application.
 
 At the moment, you still need to make an account to use searchrefiner, even locally. The account that you make is a local account and is not the same as the one you might create on another instance of searchrefiner.
 
@@ -28,7 +28,7 @@ searchrefiner can also be run from a preprepared [Dockerfile](./Dockerfile):
 
 ## Documentation
 
-Documentation for authentication, administration, and usage can be found at the project homepage: 
+Documentation for authentication, administration, and usage can be found at the project homepage:
 [ielab.io/searchrefiner](https://ielab.io/searchrefiner)
 
 ## Citing
