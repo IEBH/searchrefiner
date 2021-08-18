@@ -39,16 +39,25 @@ func (QueryVisPlugin) Startup(server searchrefiner.Server) {
 func handleTree(s searchrefiner.Server, c *gin.Context) {
 	rawQuery := c.PostForm("query")
 	lang := c.PostForm("lang")
+	// Create relevant array of pmids {{{
+	// Split string into array by newline
 	pmids := strings.Fields(c.PostForm("pmids"))
-	var relevant = []combinator.Document{}
+	// Create array of integers
+	var rel = []int{}
 	for _, i := range pmids {
 		j, err := strconv.Atoi(i)
 		if err != nil {
 				panic(err)
 		}
-		relevant = append(relevant, j)
+		rel = append(relevant, j)
+	}
+	// Make combinator.Documents array
+	relevant := make(combinator.Documents, len(rel))
+	for i, r := range rel {
+		relevant[i] = combinator.Document(r)
 	}
 	fmt.Println(relevant)
+	// }}}
 
 	p := make(map[string]tpipeline.TransmutePipeline)
 	p["medline"] = transmute.Medline2Cqr
