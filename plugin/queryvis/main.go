@@ -49,7 +49,7 @@ func handleTree(s searchrefiner.Server, c *gin.Context) {
 		if err != nil {
 				panic(err)
 		}
-		rel = append(relevant, j)
+		rel = append(rel, j)
 	}
 	// Make combinator.Documents array
 	relevant := make(combinator.Documents, len(rel))
